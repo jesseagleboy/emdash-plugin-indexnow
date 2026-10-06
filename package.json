@@ -1,0 +1,32 @@
+{
+	"name": "emdash-plugin-indexnow",
+	"version": "0.1.0",
+	"description": "EmDash plugin that pings IndexNow when pages or events are published or unpublished",
+	"keywords": ["emdash", "emdash-plugin", "indexnow", "seo", "bing", "astro"],
+	"license": "MIT",
+	"author": "Jesse Slomowitz",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/jesseagleboy/emdash-plugin-indexnow.git"
+	},
+	"bugs": {
+		"url": "https://github.com/jesseagleboy/emdash-plugin-indexnow/issues"
+	},
+	"homepage": "https://github.com/jesseagleboy/emdash-plugin-indexnow#readme",
+	"type": "module",
+	"main": "./index.mjs",
+	"exports": {
+		".": "./index.mjs",
+		"./package.json": "./package.json"
+	},
+	"files": ["index.mjs", "submission.mjs", "README.md", "LICENSE"],
+	"scripts": {
+		"test": "node --test"
+	},
+	"peerDependencies": {
+		"emdash": ">=1.0.1"
+	},
+	"engines": {
+		"node": ">=20"
+	}
+}
