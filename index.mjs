@@ -16,7 +16,7 @@ import { buildSubmission, isLiveHost } from "./submission.mjs";
 
 export { buildSubmission, isLiveHost } from "./submission.mjs";
 
-const PLUGIN_ID = "indexnow-on-publish";
+const PLUGIN_ID = "indexnow";
 const PLUGIN_VERSION = "0.1.0";
 // EmDash imports createPlugin() from this specifier at runtime, so it must match the package name.
 const PACKAGE_NAME = "emdash-plugin-indexnow";
@@ -27,7 +27,7 @@ const INDEXNOW_ENDPOINT = "https://api.indexnow.org/IndexNow";
  *
  * @param {{ siteUrl?: string, routes?: Record<string, string>, related?: Record<string, string[]>, homeSlug?: string }} [options]
  */
-export function indexnowOnPublish(options = {}) {
+export function indexnow(options = {}) {
 	return {
 		id: PLUGIN_ID,
 		version: PLUGIN_VERSION,

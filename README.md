@@ -35,12 +35,12 @@ Register it in `astro.config.mjs`:
 
 ```js
 import emdash from "emdash/astro";
-import { indexnowOnPublish } from "emdash-plugin-indexnow";
+import { indexnow } from "emdash-plugin-indexnow";
 
 export default defineConfig({
 	integrations: [
 		emdash({
-			plugins: [indexnowOnPublish()],
+			plugins: [indexnow()],
 		}),
 	],
 });
@@ -64,7 +64,7 @@ The key is deliberately read from the environment only, so it is never written i
 
 ## Options
 
-Pass options to `indexnowOnPublish()`. They must be serializable.
+Pass options to `indexnow()`. They must be serializable.
 
 | Option | Type | Default | Purpose |
 | --- | --- | --- | --- |
@@ -76,7 +76,7 @@ Pass options to `indexnowOnPublish()`. They must be serializable.
 For example, to cover a blog:
 
 ```js
-indexnowOnPublish({
+indexnow({
 	routes: { pages: "/:slug", posts: "/blog/:slug" },
 	related: { posts: ["/", "/blog"] },
 });
@@ -92,7 +92,7 @@ const siteUrl =
 
 emdash({
 	siteUrl,
-	plugins: [indexnowOnPublish({ siteUrl })],
+	plugins: [indexnow({ siteUrl })],
 });
 ```
 
