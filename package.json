@@ -1,7 +1,7 @@
 {
 	"name": "emdash-plugin-indexnow",
 	"version": "0.1.0",
-	"description": "EmDash plugin that pings IndexNow when pages or events are published or unpublished",
+	"description": "EmDash plugin that pings IndexNow when entries in the collections you configure are published or unpublished",
 	"keywords": ["emdash", "emdash-plugin", "indexnow", "seo", "bing", "astro"],
 	"license": "MIT",
 	"author": "Jesse Slomowitz",

@@ -1,6 +1,6 @@
 # emdash-plugin-indexnow
 
-An [EmDash](https://github.com/emdash-cms/emdash) plugin that tells [IndexNow](https://www.indexnow.org/) when a page or event is published or unpublished in the CMS. Submissions go to `api.indexnow.org`, which shares them with every participating search engine (Bing, Yandex, Naver, Seznam.cz, Yep and others). Google does not take part in IndexNow, so it still needs a sitemap in Search Console.
+An [EmDash](https://github.com/emdash-cms/emdash) plugin that tells [IndexNow](https://www.indexnow.org/) when an entry is published or unpublished in the CMS. Submissions go to `api.indexnow.org`, which shares them with every participating search engine (Bing, Yandex, Naver, Seznam.cz, Yep and others). Google does not take part in IndexNow, so it still needs a sitemap in Search Console.
 
 Build-time integrations such as `astro-indexnow` only see pages when the site is built, so a publish made in the CMS between builds would never be submitted. This plugin closes that gap by hooking `content:afterPublish` and `content:afterUnpublish`.
 
@@ -10,12 +10,13 @@ Build-time integrations such as `astro-indexnow` only see pages when the site is
 
 On every publish or unpublish, the plugin builds the list of public URLs that changed and sends one request to IndexNow:
 
-- an entry in `pages` submits `/<slug>`, and the `home` entry submits `/`
-- an entry in `events` submits `/events/<slug>` plus `/` and `/events`, because those pages list events
+- the entry's own URL, built from the `routes` pattern you configured for its collection
+- any listing pages you configured under `related` for that collection, because they change whenever one of its entries does
+- the site root, if the entry is the one you marked as `home`
 
-Publish and unpublish are handled identically. IndexNow has no status field, so it only learns that a URL changed and fetches it again. An unpublished page then returns a 404, which is what lets the engines drop it, so make sure the page really stops being served.
+The plugin has no built-in knowledge of your collections or URLs. EmDash sites define their own public routes, so you tell it which collections to watch and where their entries live (see [Options](#options)). Collections without a route are ignored.
 
-Collections other than `pages` and `events` are ignored unless you add routes (see [Options](#options)). A failed ping never blocks publishing.
+Publish and unpublish are handled identically. IndexNow has no status field, so it only learns that a URL changed and fetches it again. An unpublished page then returns a 404, which is what lets the engines drop it, so make sure the page really stops being served. A failed ping never blocks publishing.
 
 ## Requirements
 
@@ -40,11 +41,18 @@ import { indexnow } from "emdash-plugin-indexnow";
 export default defineConfig({
 	integrations: [
 		emdash({
-			plugins: [indexnow()],
+			plugins: [
+				indexnow({
+					// Collection slug -> public URL pattern for its entries.
+					routes: { pages: "/:slug", posts: "/blog/:slug" },
+				}),
+			],
 		}),
 	],
 });
 ```
+
+`routes` is required. Without it the plugin logs a warning and skips every ping.
 
 ## Set up the key
 
@@ -66,19 +74,20 @@ The key is deliberately read from the environment only, so it is never written i
 
 Pass options to `indexnow()`. They must be serializable.
 
-| Option | Type | Default | Purpose |
+| Option | Type | Required | Purpose |
 | --- | --- | --- | --- |
-| `siteUrl` | `string` | EmDash's site URL | The public origin to submit, for example `https://www.example.com`. Only the origin is used. |
-| `routes` | `Record<string, string>` | `{ events: "/events/:slug", pages: "/:slug" }` | Maps a collection to its public URL pattern. Replaces the defaults. |
-| `related` | `Record<string, string[]>` | `{ events: ["/", "/events"] }` | Extra pages to resubmit when an entry in a collection changes. Replaces the defaults. |
-| `homeSlug` | `string` | `"home"` | The `pages` entry that lives at `/`. |
+| `routes` | `Record<string, string>` | Yes | Maps a collection slug to the public URL pattern of its entries. `:slug` is replaced with the entry's slug. A collection that is not listed is ignored. |
+| `related` | `Record<string, string[]>` | No | Extra paths to resubmit when an entry in a collection changes, such as the listing pages that show it. |
+| `home` | `{ collection: string, slug: string }` | No | The one entry that lives at `/` instead of its collection's pattern. |
+| `siteUrl` | `string` | No | The public origin to submit, for example `https://www.example.com`. Only the origin is used. Falls back to the sources described below. |
 
-For example, to cover a blog:
+There are no defaults for `routes`, `related` or `home`, so the plugin never assumes anything about your content model. For example, a site with pages at the root, blog posts under `/blog` and a home page entry:
 
 ```js
 indexnow({
 	routes: { pages: "/:slug", posts: "/blog/:slug" },
 	related: { posts: ["/", "/blog"] },
+	home: { collection: "pages", slug: "home" },
 });
 ```
 
@@ -92,7 +101,7 @@ const siteUrl =
 
 emdash({
 	siteUrl,
-	plugins: [indexnow({ siteUrl })],
+	plugins: [indexnow({ siteUrl, routes: { pages: "/:slug" } })],
 });
 ```
 

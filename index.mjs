@@ -25,7 +25,7 @@ const INDEXNOW_ENDPOINT = "https://api.indexnow.org/IndexNow";
 /**
  * Descriptor factory, called from astro.config.mjs. Everything returned here must be serializable.
  *
- * @param {{ siteUrl?: string, routes?: Record<string, string>, related?: Record<string, string[]>, homeSlug?: string }} [options]
+ * @param {{ siteUrl?: string, routes: Record<string, string>, related?: Record<string, string[]>, home?: { collection: string, slug: string } }} options
  */
 export function indexnow(options = {}) {
 	return {
@@ -43,6 +43,11 @@ async function notify(event, ctx, options) {
 	const key = process.env.INDEXNOW_KEY;
 	if (!key) {
 		log?.warn?.("IndexNow: INDEXNOW_KEY is not set, skipping ping");
+		return;
+	}
+
+	if (!options.routes || Object.keys(options.routes).length === 0) {
+		log?.warn?.("IndexNow: no routes configured, skipping ping. Pass `routes` to indexnow() in astro.config.mjs");
 		return;
 	}
 
