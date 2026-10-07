@@ -65,4 +65,8 @@ jobs:
           case "$GITHUB_REF_NAME" in
             *-*) FLAGS="--prerelease" ;;
           esac
-          gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag $FLAGS
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists, skipping"
+          else
+            gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag $FLAGS
+          fi
