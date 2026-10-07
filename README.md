@@ -4,7 +4,7 @@ An [EmDash](https://github.com/emdash-cms/emdash) plugin that tells [IndexNow](h
 
 Build-time integrations such as `astro-indexnow` only see pages when the site is built, so a publish made in the CMS between builds would never be submitted. This plugin closes that gap by hooking `content:afterPublish` and `content:afterUnpublish`.
 
-**Status:** version 0.1.0, not yet published to npm.
+**Status:** version 0.1.0, early release.
 
 ## How it works
 
